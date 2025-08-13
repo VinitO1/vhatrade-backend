@@ -9,12 +9,10 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.use(cors({
-  origin: [
-    'https://vhatrade.ca',
-    'https://www.vhatrade.ca',
-    'http://localhost:3000'
-  ],
-  credentials: true
+  origin: true, // Allow all origins temporarily
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
@@ -35,16 +33,18 @@ app.get('/', (req, res) => {
 // Test endpoint to verify Supabase connection
 app.get('/api/test', async (req, res) => {
     try {
+        // Test Supabase connection without requiring specific tables
         const { data, error } = await supabase
-            .from('test')
-            .select('*')
+            .from('contacts')
+            .select('count')
             .limit(1);
 
         if (error) throw error;
 
         res.json({
             message: 'Successfully connected to Supabase!',
-            data: data
+            status: 'Connected',
+            timestamp: new Date().toISOString()
         });
     } catch (error) {
         console.error('Supabase connection error:', error);
