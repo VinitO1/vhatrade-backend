@@ -8,8 +8,29 @@ const supabase = require('./config/supabaseClient');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://vhatrade.ca',
+    'https://www.vhatrade.ca',
+    'http://localhost:3000'
+  ],
+  credentials: true
+}));
 app.use(express.json());
+
+// Root endpoint
+app.get('/', (req, res) => {
+    res.json({
+        message: 'VHATrade Backend API is running!',
+        endpoints: {
+            health: '/api/health',
+            test: '/api/test',
+            contact: '/api/contact'
+        },
+        status: 'OK',
+        timestamp: new Date().toISOString()
+    });
+});
 
 // Test endpoint to verify Supabase connection
 app.get('/api/test', async (req, res) => {
