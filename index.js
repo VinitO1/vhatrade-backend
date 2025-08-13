@@ -9,10 +9,16 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.use(cors({
-  origin: true, // Allow all origins temporarily
-  credentials: true,
+  origin: [
+    'https://vhatrade.ca',
+    'https://www.vhatrade.ca',
+    'http://localhost:3000'
+  ],
+  credentials: false,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 app.use(express.json());
 
@@ -59,6 +65,9 @@ app.get('/api/test', async (req, res) => {
 app.get('/api/health', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
+
+// Contact form endpoint - OPTIONS for CORS preflight
+app.options('/api/contact', cors());
 
 // Contact form endpoint
 app.post('/api/contact', [
